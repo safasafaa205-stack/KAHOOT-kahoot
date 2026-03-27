@@ -9,95 +9,122 @@
         @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&display=swap');
 
         :root { 
-            --deep-blue: #0a2342; --pearl-velvet: #fdfcfb; 
-            --royal-gold: #D4AF37; --skin: #ffdbac; --dress: #e91e63;
+            --cool-blue: #0a192f; 
+            --pearl-red: #fff5f5; /* لؤلؤي بلمحة حمراء */
+            --royal-gold: #D4AF37;
+            --sun-glow: rgba(255, 253, 208, 0.3);
+            --dress: #d32f2f; /* فستان أحمر لؤلؤي */
         }
         
         body { 
             font-family: 'Cairo', sans-serif; margin: 0; min-height: 100vh; 
             display: flex; justify-content: center; align-items: center; 
-            background: radial-gradient(circle, #1a1a2e, #020205);
+            background: linear-gradient(135deg, #0d1b2a, #1b263b);
             overflow: hidden; perspective: 1200px;
         }
 
-        /* مسرح الشخصية 3D */
-        .character-stage {
-            position: absolute; bottom: 40px; right: 3%;
-            width: 180px; height: 320px; z-index: 100;
-            transform-style: preserve-3d; transition: 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        /* أشعة الشمس المتوهجة */
+        .sun-rays {
+            position: absolute; top: -200px; left: -200px;
+            width: 1000px; height: 1000px;
+            background: radial-gradient(circle, var(--sun-glow) 0%, transparent 70%);
+            filter: blur(50px); animation: sunPulse 8s infinite alternate;
+            z-index: 1; pointer-events: none;
         }
+        @keyframes sunPulse { from { opacity: 0.3; transform: scale(1); } to { opacity: 0.6; transform: scale(1.2); } }
 
+        /* العناصر الجمالية حول الفتاة (حديقة سحرية) */
+        .scenery { position: absolute; bottom: 20px; right: 50px; width: 300px; height: 400px; z-index: 5; }
+        .flower { position: absolute; bottom: 0; width: 20px; height: 60px; background: #2d6a4f; border-radius: 10px; }
+        .flower::after { content: '🌸'; position: absolute; top: -15px; left: -5px; font-size: 20px; }
+        .f1 { right: 40px; height: 80px; } .f2 { right: 220px; height: 50px; }
+        .butterfly { position: absolute; font-size: 20px; animation: fly 5s infinite linear; }
+        @keyframes fly { 0% { transform: translate(0,0) rotate(0deg); } 50% { transform: translate(-30px, -50px) rotate(20deg); } 100% { transform: translate(0,0) rotate(0deg); } }
+
+        /* شخصية الفتاة 3D */
+        .character-stage {
+            position: absolute; bottom: 40px; right: 80px;
+            width: 180px; height: 320px; transform-style: preserve-3d; transition: 0.6s;
+        }
         .girl-3d { width: 100%; height: 100%; position: relative; animation: breathe 4s infinite ease-in-out; }
-        @keyframes breathe { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-8px); } }
+        @keyframes breathe { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
+        .victory { animation: jump 0.5s infinite alternate; }
+        @keyframes jump { from { transform: translateY(0); } to { transform: translateY(-40px); } }
         
-        .victory { animation: celebration 0.6s infinite; }
-        @keyframes celebration { 0%, 100% { transform: translateY(0) scale(1.1); } 50% { transform: translateY(-40px) scale(1.1); } }
-        .sadness { transform: rotateX(15deg) translateY(10px); filter: grayscale(0.4); }
-
-        /* تفاصيل الجسد */
-        .head { position: absolute; top: 0; left: 50%; transform: translateX(-50%); width: 65px; height: 65px; background: var(--skin); border-radius: 50%; border: 1.5px solid #444; z-index: 10; }
-        .hair { position: absolute; top: -8px; left: 50%; transform: translateX(-50%); width: 75px; height: 45px; background: #3e2723; border-radius: 40px 40px 10px 10px; }
-        .body-3d { position: absolute; top: 62px; left: 50%; transform: translateX(-50%); width: 55px; height: 95px; background: var(--dress); border-radius: 15px 15px 40px 40px; box-shadow: inset 0 0 15px rgba(0,0,0,0.2); }
-        .arm { position: absolute; top: 70px; width: 12px; height: 65px; background: var(--skin); border-radius: 10px; transition: 0.4s; transform-origin: top; }
+        .head { position: absolute; top: 0; left: 50%; transform: translateX(-50%); width: 65px; height: 65px; background: #ffdbac; border-radius: 50%; border: 1px solid #999; z-index: 10; }
+        .hair { position: absolute; top: -5px; width: 75px; height: 50px; background: #3e2723; border-radius: 40px 40px 5px 5px; left: 50%; transform: translateX(-50%); }
+        .body-3d { position: absolute; top: 62px; left: 50%; transform: translateX(-50%); width: 55px; height: 100px; background: var(--dress); border-radius: 15px 15px 50px 50px; box-shadow: 0 5px 15px rgba(0,0,0,0.3); }
+        .arm { position: absolute; top: 70px; width: 12px; height: 70px; background: #ffdbac; border-radius: 10px; transform-origin: top; transition: 0.4s; }
         .arm.left { left: 45px; } .arm.right { right: 45px; }
-        .leg { position: absolute; bottom: 80px; width: 15px; height: 85px; background: #fdfcfb; border-radius: 8px; border-bottom: 8px solid #222; }
+        .leg { position: absolute; bottom: 70px; width: 16px; height: 90px; background: #fff; border-radius: 5px; border-bottom: 8px solid #222; }
         .leg.left { left: 70px; } .leg.right { right: 70px; }
 
-        /* حركات الأذرع */
-        .victory .arm.left { transform: rotate(140deg); }
-        .victory .arm.right { transform: rotate(-140deg); }
-        .sadness .arm { transform: rotate(10deg); }
-
-        /* واجهة الاختبار */
+        /* واجهة الاختبار - لؤلؤي محمر */
         #dashboard { 
-            background: var(--pearl-velvet); width: 80%; max-width: 800px; padding: 35px; 
-            border-radius: 35px; border: 4px solid var(--royal-gold);
-            z-index: 10; position: relative; margin-right: 140px;
-            box-shadow: 0 25px 50px rgba(0,0,0,0.6);
+            background: var(--pearl-red); width: 85%; max-width: 780px; padding: 40px; 
+            border-radius: 50px; border: 6px double #e57373;
+            z-index: 10; position: relative; margin-right: 180px;
+            box-shadow: 0 40px 100px rgba(0,0,0,0.7), inset 0 0 30px rgba(255,192,192,0.4);
+            color: #2c3e50;
         }
 
-        .question-card { font-size: 1.3rem; margin-bottom: 25px; text-align: right; border-right: 8px solid var(--royal-gold); padding: 20px; background: #fff; border-radius: 15px; line-height: 1.6; }
-        .options-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
-        .option-btn { padding: 18px; background: #fff; border: 1.5px solid #ddd; border-radius: 15px; cursor: pointer; transition: 0.3s; font-family: 'Cairo'; font-weight: 700; font-size: 1rem; color: #444; }
-        .option-btn:hover { border-color: var(--royal-gold); background: #fffcf0; transform: scale(1.02); }
-        .correct { background: #2ecc71 !important; color: white !important; border-color: #27ae60 !important; }
-        .wrong { background: #e74c3c !important; color: white !important; border-color: #c0392b !important; }
+        .question-card { 
+            font-size: 1.4rem; margin-bottom: 25px; text-align: right; 
+            border-right: 12px solid #d32f2f; padding: 25px; 
+            background: rgba(255,255,255,0.8); border-radius: 20px; line-height: 1.8;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+        }
 
-        .btn-royal { background: linear-gradient(145deg, var(--royal-gold), #b8860b); color: white; padding: 15px 45px; border-radius: 30px; border: none; cursor: pointer; font-family: 'Cairo'; font-weight: bold; margin-top: 20px; }
+        .options-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
+        .option-btn { 
+            padding: 18px; background: #fff; border: 2px solid #ffcdd2; 
+            border-radius: 20px; cursor: pointer; transition: 0.3s; 
+            font-family: 'Cairo'; font-weight: 700; font-size: 1.1rem; color: #5d4037;
+        }
+        .option-btn:hover { border-color: #d32f2f; background: #ffebee; transform: scale(1.03); }
+        
+        .correct { background: #4caf50 !important; color: white !important; border-color: #2e7d32 !important; animation: pulse-green 0.5s; }
+        .wrong { background: #f44336 !important; color: white !important; border-color: #b71c1c !important; }
+
+        @keyframes pulse-green { 0% { transform: scale(1); } 50% { transform: scale(1.05); } 100% { transform: scale(1); } }
+
+        .btn-royal { background: linear-gradient(145deg, #d32f2f, #b71c1c); color: white; padding: 18px 60px; border-radius: 50px; border: none; cursor: pointer; font-family: 'Cairo'; font-weight: bold; margin-top: 30px; font-size: 1.2rem; }
 
         #quiz-section, #score-section { display: none; }
-        
-        @media (max-width: 800px) {
-            #dashboard { margin-right: 0; width: 95%; padding: 20px; }
-            .character-stage { width: 100px; height: 200px; right: 0; bottom: 0; opacity: 0.5; pointer-events: none; }
-            .options-grid { grid-template-columns: 1fr; }
-        }
     </style>
 </head>
 <body>
 
-    <div class="character-stage" id="stage">
-        <div class="girl-3d" id="girl">
-            <div class="hair"></div>
-            <div class="head">
-                <div style="position:absolute; top:30px; left:15px; width:6px; height:6px; background:#333; border-radius:50%;"></div>
-                <div style="position:absolute; top:30px; right:15px; width:6px; height:6px; background:#333; border-radius:50%;"></div>
-                <div id="mouth" style="position:absolute; top:45px; left:22px; width:20px; height:2px; background:#333; transition: 0.3s;"></div>
+    <div class="sun-rays"></div>
+
+    <div class="scenery">
+        <div class="flower f1"></div>
+        <div class="flower f2"></div>
+        <div class="butterfly" style="top:50px; right:100px;">🦋</div>
+        <div class="butterfly" style="top:120px; right:250px; animation-delay: 2s;">🦋</div>
+        
+        <div class="character-stage" id="stage">
+            <div class="girl-3d" id="girl">
+                <div class="hair"></div>
+                <div class="head">
+                    <div style="position:absolute; top:32px; left:15px; width:6px; height:6px; background:#222; border-radius:50%;"></div>
+                    <div style="position:absolute; top:32px; right:15px; width:6px; height:6px; background:#222; border-radius:50%;"></div>
+                    <div id="mouth" style="position:absolute; top:48px; left:22px; width:20px; height:2px; background:#222;"></div>
+                </div>
+                <div class="body-3d"></div>
+                <div class="arm left"></div> <div class="arm right"></div>
+                <div class="leg left"></div> <div class="leg right"></div>
             </div>
-            <div class="body-3d"></div>
-            <div class="arm left"></div> <div class="arm right"></div>
-            <div class="leg left"></div> <div class="leg right"></div>
         </div>
     </div>
 
     <div id="dashboard">
         <div id="start-screen">
-            <h1 style="color: var(--deep-blue); margin-bottom: 10px;">مختبر ذكاءات المستقبل</h1>
-            <h3 style="color: var(--royal-gold);">بإشراف الأخصائية: صفاء المصري</h3>
-            <p style="color: #666; font-weight: bold;">اختبار المواقف التحليلية العليا</p>
-            <input type="text" id="p-name" placeholder="أدخل اسم المبدع هنا" style="padding:15px; width:80%; border-radius:12px; border:2px solid #eee; text-align:center; font-family:'Cairo'; margin-bottom: 20px;">
-            <br>
-            <button class="btn-royal" onclick="begin()">بدء التحليل الشامل ⮕</button>
+            <h1 style="color: #b71c1c; font-size: 2.8rem; margin: 0;">مختبر التحليل المعرفي</h1>
+            <h3 style="color: #5d4037; margin-bottom: 20px;">بإشراف الخبيرة: صفاء المصري</h3>
+            <p style="font-weight: bold; color: #888;">نظام قياس الذكاءات عبر المواقف الفلسفية والمشكلات المعقدة</p>
+            <input type="text" id="p-name" placeholder="أدخل اسم المبدع المتقدم" style="padding:20px; width:80%; border-radius:15px; border:2px solid #ffcdd2; text-align:center; font-family:'Cairo'; font-size: 1.2rem;"><br>
+            <button class="btn-royal" onclick="begin()">دخول الاختبار ⮕</button>
         </div>
 
         <div id="quiz-section">
@@ -107,57 +134,85 @@
         </div>
 
         <div id="score-section">
-            <h2 style="color: var(--royal-gold);">تقرير الموهبة النهائي</h2>
-            <div id="final-stats"></div>
-            <h1 id="score-val" style="font-size: 4rem; color: var(--deep-blue);"></h1>
-            <button class="btn-royal" onclick="location.reload()">بدء اختبار جديد</button>
+            <h2 style="color: #b71c1c;">تقرير الحالة الإبداعية</h2>
+            <h1 id="score-val" style="font-size: 6rem; color: #0d1b2a;"></h1>
+            <p id="final-comment" style="font-size: 1.4rem; font-weight: bold;"></p>
+            <button class="btn-royal" onclick="location.reload()">محاولة تحليل جديدة</button>
         </div>
     </div>
 
 <script>
+    // نظام الصوت المتقدم
+    const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    function playSound(type) {
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        osc.connect(gain); gain.connect(audioCtx.destination);
+        
+        if(type === 'correct') {
+            osc.frequency.setValueAtTime(523.25, audioCtx.currentTime); // C5
+            osc.frequency.exponentialRampToValueAtTime(1046.50, audioCtx.currentTime + 0.1); // C6
+            gain.gain.setValueAtTime(0.1, audioCtx.currentTime);
+        } else if(type === 'wrong') {
+            osc.frequency.setValueAtTime(220, audioCtx.currentTime); // A3
+            osc.frequency.linearRampToValueAtTime(110, audioCtx.currentTime + 0.2); // A2
+            gain.gain.setValueAtTime(0.1, audioCtx.currentTime);
+        } else {
+            osc.frequency.setValueAtTime(400, audioCtx.currentTime);
+            gain.gain.setValueAtTime(0.05, audioCtx.currentTime);
+        }
+        osc.start(); osc.stop(audioCtx.currentTime + 0.2);
+    }
+
     const quizData = [
-        { q: "1. عندما تشاهد جهازاً إلكترونياً معطلاً، تجد نفسك تفكر تلقائياً في تسلسل تدفق الكهرباء داخل الدوائر لاكتشاف نقطة الانقطاع منطقياً:", a: ["ذكاء مكاني", "ذكاء منطقي رياضي", "ذكاء تقني حركي", "ذكاء بصري"], c: 1 },
-        { q: "2. أثناء حوار جماعي صاخب، تستطيع رصد التغير المفاجئ في نبرة صوت زميلك وتستنتج أنه يشعر بالإهانة رغم ابتسامته:", a: ["ذكاء اجتماعي", "ذكاء عاطفي", "ذكاء لغوي", "ذكاء ذاتي"], c: 0 },
-        { q: "3. في رحلة برية، تلاحظ أن تشققات الأرض تتبع نمطاً هندسياً يشبه خلايا النحل، وتتوقع أماكن وجود الرطوبة بناءً على ميل الصخور:", a: ["ذكاء طبيعي", "ذكاء مكاني", "ذكاء منطقي", "ذكاء وجودي"], c: 0 },
-        { q: "4. تستطيع تأليف مقطوعة إيقاعية باستخدام أدوات المطبخ، مدركاً الفوارق الدقيقة في ترددات الأصوات والزمن الفاصل بين النبضات:", a: ["ذكاء موسيقي", "ذكاء حركي", "ذكاء رياضي", "ذكاء لغوي"], c: 0 },
-        { q: "5. تختار كلماتك بدقة في الرسائل الصعبة لضمان وصول المعنى المقصود دون أي احتمال للتأويل الخاطئ، مستخدماً استعارات بليغة:", a: ["ذكاء لغوي", "ذكاء اجتماعي", "ذكاء ذاتي", "ذكاء وجودي"], c: 0 },
-        { q: "6. حين يصف لك أحدهم طريقاً، تتخيل خريطة ذهنية ثلاثية الأبعاد للمكان وتستطيع 'رؤية' المعالم من زاوية علوية في خيالك:", a: ["ذكاء مكاني", "ذكاء منطقي", "ذكاء طبيعي", "ذكاء حركي"], c: 0 },
-        { q: "7. تخصص وقتاً يومياً لمراجعة أهدافك، وتدرك تماماً نقاط ضعفك النفسية وتعرف كيف تتحكم في ردود أفعالك تجاه المستفزين:", a: ["ذكاء ذاتي", "ذكاء اجتماعي", "ذكاء أخلاقي", "ذكاء عاطفي"], c: 0 },
-        { q: "8. كثيراً ما تتساءل عن سبب وجود البشر، وما هو دورنا الحقيقي في الكون، وتبحث عن غايات تتجاوز الحياة اليومية المادية:", a: ["ذكاء وجودي", "ذكاء فلسفي", "ذكاء ذاتي", "ذكاء طبيعي"], c: 0 },
-        { q: "9. تستمتع بحل الألغاز التي تتطلب ربط معطيات متباعدة للوصول لنتيجة واحدة، مثل استنتاج الجاني في القصص البوليسية المعقدة:", a: ["ذكاء منطقي رياضي", "ذكاء لغوي", "ذكاء بصري", "ذكاء رقمي"], c: 0 },
-        { q: "10. ترفض القيام بفعل يحقق ربحاً كبيراً إذا كان يتعارض مع مبادئك، حتى لو لم يراقبك أحد، لإيمانك بمسؤوليتك تجاه الآخرين:", a: ["ذكاء أخلاقي", "ذكاء ذاتي", "ذكاء اجتماعي", "ذكاء وجودي"], c: 0 },
-        { q: "11. تمتلك قدرة فائقة على محاكاة حركات رياضية معقدة من المرة الأولى، وتتحكم في توازن جسدك بدقة مذهلة أثناء الحركة:", a: ["ذكاء حركي جسدي", "ذكاء مكاني", "ذكاء طبيعي", "ذكاء ذاتي"], c: 0 },
-        { q: "12. عندما تشرح فكرة لزميلك، تبتكر فوراً 'تمثيلاً' أو تجربة عملية لتقريب المفهوم له، مدركاً كيف يستقبل عقله المعلومات:", a: ["ذكاء تعليمي", "ذكاء لغوي", "ذكاء اجتماعي", "ذكاء منطقي"], c: 0 },
-        { q: "13. تنجذب لفهم لغات البرمجة والأنظمة الرقمية، وترى العالم كأكواد وبيانات يمكن إعادة هيكلتها لتحسين الكفاءة:", a: ["ذكاء رقمي", "ذكاء منطقي", "ذكاء تقني", "ذكاء بصري"], c: 0 }
+        { q: "1. الموقف الوجودي: عندما تواجه فكرة 'اللانهاية' في الكون، هل تجد نفسك منجذباً لربطها بقوانين رياضية دقيقة أم تميل للتأمل في غاية وجودك كجزء من هذا النظام؟", a: ["تحليل رياضي مجرد", "تأمل وجودي كوني", "إدراك مكاني للأبعاد", "بحث طبيعي حيوي"], c: 1 },
+        { q: "2. الموقف التحليلي: إذا أعطيت مجموعة بيانات تبدو عشوائية (أرقام، صور، أصوات)، ما هي أول 'خوارزمية' عقلية تستخدمها لفك شفرتها؟", a: ["البحث عن أنماط لغوية", "تحليل الترددات الصوتية", "استنتاج روابط منطقية", "تخيل هيكل مكاني"], c: 2 },
+        { q: "3. الموقف العاطفي-الاجتماعي: في نقاش حاد، هل تستطيع تمييز 'المسافة النفسية' بين ما يقوله الطرف الآخر وبين ما يشعر به حقاً من خلال انقباض عضلات وجهه اللاإرادية؟", a: ["ذكاء اجتماعي خارجي", "ذكاء عاطفي داخلي", "ذكاء لغوي دلالي", "ذكاء ذاتي عميق"], c: 1 },
+        { q: "4. الموقف المكاني المعقد: تخيل أنك تقوم بتفكيك محرك افتراضي في ذهنك؛ هل يمكنك تدوير قطعة واحدة دون التأثير على توازن باقي المحرك في مخيلتك؟", a: ["ذكاء حركي دقيق", "ذكاء مكاني ثلاثي", "ذكاء منطقي بنيوي", "ذكاء بصري مسطح"], c: 1 },
+        { q: "5. الموقف اللغوي الفلسفي: هل تستخدم الكلمات كأدوات لنقل المعلومات فقط، أم تبني بها 'استعارات' معقدة لشرح مفاهيم غير ملموسة مثل العدالة أو الوقت؟", a: ["ذكاء لغوي إبداعي", "ذكاء منطقي فلسفي", "ذكاء وجودي عميق", "ذكاء اجتماعي تواصلي"], c: 0 },
+        { q: "6. الموقف الطبيعي: عند مراقبة غابة، هل ترى 'أشجاراً منفصلة' أم تدرك النظام التكافلي الخفي الذي يربط جذور الأشجار بالفطريات تحت الأرض كشبكة معلومات؟", a: ["ذكاء طبيعي نظمي", "ذكاء بصري تفصيلي", "ذكاء وجودي كلي", "ذكاء منطقي رياضي"], c: 0 },
+        { q: "7. الموقف الذاتي: إذا واجهت فشلاً ذريعاً، هل تمتلك القدرة على فصل 'ذاتك' عن 'التجربة' وتحليل الخلل الاستراتيجي في تفكيرك بموضوعية تامة؟", a: ["ذكاء ذاتي تحليلي", "ذكاء عاطفي مرن", "ذكاء أخلاقي قيمي", "ذكاء منطقي بارد"], c: 0 },
+        { q: "8. الموقف الموسيقي: هل تستطيع تمييز 'النشاز' في إيقاع الحياة اليومية (مثل صوت محرك أو تنفس) وتوظيفه لخلق نمط صوتي ذو معنى؟", a: ["ذكاء موسيقي إيقاعي", "ذكاء طبيعي سمعي", "ذكاء حركي تفاعلي", "ذكاء منطقي رياضي"], c: 0 },
+        { q: "9. الموقف الأخلاقي: إذا كان عليك اتخاذ قرار ينقذ الأغلبية لكنه يظلم فرداً واحداً، هل تستند في حكمك لـ 'مسطرة قيمية' ثابتة لا تتغير بتغير المصالح؟", a: ["ذكاء أخلاقي مبدئي", "ذكاء اجتماعي نفعي", "ذكاء وجودي كلي", "ذكاء ذاتي نفسي"], c: 0 },
+        { q: "10. الموقف الحركي: في رياضة جديدة، هل تتعلم الحركات عن طريق 'التلقين' أم يشعر جسدك بمركز الثقل وقوانين الفيزياء ويحاكيها عفوياً؟", a: ["ذكاء حركي فطري", "ذكاء مكاني حركي", "ذكاء بصري تقليدي", "ذكاء منطقي عملي"], c: 0 },
+        { q: "11. الموقف التعليمي: حين تفهم مفهوماً صعباً، هل تستطيع إعادة 'هندسته' ذهنياً لتبسيطه لطفل صغير باستخدام أدوات من بيئته المحيطة؟", a: ["ذكاء تعليمي استراتيجي", "ذكاء لغوي تبسيطي", "ذكاء اجتماعي تفاعلي", "ذكاء بصري توضيحي"], c: 0 },
+        { q: "12. الموقف الرقمي: هل تدرك كيف تعالج الأنظمة الذكية البيانات خلف الشاشات، وتستطيع توقع 'سلوك الخوارزمية' قبل أن تظهر لك النتائج؟", a: ["ذكاء رقمي تقني", "ذكاء منطقي رياضي", "ذكاء بصري أنظمي", "ذكاء مكاني رقمي"], c: 0 },
+        { q: "13. الموقف الكوني: هل تشعر بارتباط عميق بين أصغر ذرة في جسدك وأبعد مجرة في الكون، وتبحث عن القوانين الموحدة التي تجمعهما؟", a: ["ذكاء وجودي شمولي", "ذكاء طبيعي كوني", "ذكاء رياضي نظري", "ذكاء ذاتي روحاني"], c: 0 }
     ];
 
     let qi = 0, score = 0;
 
     function begin() {
-        if(!document.getElementById('p-name').value) return alert("من فضلك اكتب اسمك أولاً!");
+        if(!document.getElementById('p-name').value) return alert("أهلاً بك.. فضلاً أدخل اسمك للبدء");
+        playSound('start');
         document.getElementById('start-screen').style.display = 'none';
         document.getElementById('quiz-section').style.display = 'block';
         loadQ();
     }
 
-    function updateCharacter(state) {
+    function updateGirl(state) {
         const girl = document.getElementById('girl');
         const mouth = document.getElementById('mouth');
-        girl.classList.remove('victory', 'sadness');
+        const arms = document.querySelectorAll('.arm');
+        girl.classList.remove('victory');
         
         if(state === 'happy') {
             girl.classList.add('victory');
-            mouth.style.height = "12px"; mouth.style.borderRadius = "0 0 15px 15px";
+            mouth.style.height = "12px"; mouth.style.borderRadius = "0 0 10px 10px";
+            arms[0].style.transform = "rotate(150deg)"; arms[1].style.transform = "rotate(-150deg)";
         } else if(state === 'sad') {
-            girl.classList.add('sadness');
             mouth.style.height = "2px"; mouth.style.borderRadius = "50% 50% 0 0";
+            arms[0].style.transform = "rotate(20deg)"; arms[1].style.transform = "rotate(-20deg)";
+            girl.style.transform = "rotateX(20deg)";
         } else {
             mouth.style.height = "2px"; mouth.style.borderRadius = "0";
+            arms[0].style.transform = "rotate(0)"; arms[1].style.transform = "rotate(0)";
+            girl.style.transform = "rotateX(0)";
         }
     }
 
     function loadQ() {
-        updateCharacter('idle');
+        updateGirl('idle');
         const q = quizData[qi];
         document.getElementById('q-text').innerText = q.q;
         const g = document.getElementById('o-grid'); g.innerHTML = '';
@@ -177,12 +232,12 @@
 
         if(idx === correct) {
             b.classList.add('correct'); score++;
-            updateCharacter('happy');
-            confetti({ particleCount: 120, spread: 70, origin: { y: 0.7 } });
+            playSound('correct'); updateGirl('happy');
+            confetti({ particleCount: 150, spread: 70, origin: { y: 0.7 } });
         } else {
             if(b) b.classList.add('wrong');
             btns[correct].classList.add('correct');
-            updateCharacter('sad');
+            playSound('wrong'); updateGirl('sad');
         }
         document.getElementById('next-btn').style.display = 'inline-block';
     }
@@ -195,8 +250,9 @@
         document.getElementById('quiz-section').style.display = 'none';
         document.getElementById('score-section').style.display = 'block';
         document.getElementById('score-val').innerText = `${score} / 13`;
-        document.getElementById('final-stats').innerHTML = `<p>المبدع: ${document.getElementById('p-name').value}</p>`;
-        updateCharacter(score > 7 ? 'happy' : 'idle');
+        let msg = score > 10 ? "عبقرية تحليلية نادرة!" : (score > 6 ? "ذكاء متزن وقدرات واعدة" : "تحتاج لتطوير مهارات الربط التحليلي");
+        document.getElementById('final-comment').innerText = msg;
+        updateGirl(score > 7 ? 'happy' : 'idle');
     }
 </script>
 </body>
