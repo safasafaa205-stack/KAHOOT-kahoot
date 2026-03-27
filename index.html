@@ -1,0 +1,167 @@
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>تحدي جاردنر الملكي - 13 ذكاءً</title>
+    <style>
+        :root { --royal-burgundy: #800020; --royal-gold: #D4AF37; --royal-turquoise: #008080; }
+        body { font-family: 'Segoe UI', Tahoma, sans-serif; margin: 0; min-height: 100vh; display: flex; justify-content: center; align-items: center; background: linear-gradient(-45deg, #800020, #008080, #2c3e50, #D4AF37); background-size: 400% 400%; animation: gradientBG 15s ease infinite; }
+        @keyframes gradientBG { 0% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } 100% { background-position: 0% 50%; } }
+        
+        #game-container { background: rgba(255, 255, 255, 0.97); width: 95%; max-width: 850px; padding: 30px; border-radius: 30px; border: 4px double var(--royal-gold); text-align: center; box-shadow: 0 20px 60px rgba(0,0,0,0.4); position: relative; max-height: 90vh; overflow-y: auto; }
+
+        /* الأفاتار المتحرك */
+        .ai-buddy { font-size: 60px; display: inline-block; animation: bounce 2s infinite; margin-bottom: 10px; transition: 0.3s; }
+        @keyframes bounce { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-15px); } }
+
+        .question-box { font-size: 1.3rem; margin: 20px 0; color: #2c3e50; font-weight: 700; padding: 20px; background: #f0f4f8; border-radius: 15px; border-right: 10px solid var(--royal-gold); text-align: right; }
+        .options-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
+        .option-btn { padding: 15px; border: 2px solid #ddd; border-radius: 12px; background: white; cursor: pointer; font-weight: 600; transition: 0.3s; font-size: 1rem; }
+        .correct { background: #27ae60 !important; color: white; }
+        .wrong { background: #e74c3c !important; color: white; }
+        
+        .btn-action { background: var(--royal-burgundy); color: white; padding: 12px 40px; border: none; border-radius: 30px; font-size: 1.1rem; cursor: pointer; font-weight: bold; margin-top: 20px; }
+        
+        #report-table { width: 100%; border-collapse: collapse; margin-top: 20px; text-align: right; }
+        #report-table th, #report-table td { border: 1px solid #ddd; padding: 10px; font-size: 0.9rem; }
+        #report-table th { background: var(--royal-gold); color: white; }
+
+        @media print { .no-print, .btn-action, .ai-buddy { display: none !important; } body { background: white; } #game-container { border: 2px solid #000; width: 100%; box-shadow: none; } }
+        #quiz-section, #score-container { display: none; }
+    </style>
+</head>
+<body>
+
+<div id="game-container">
+    <div id="ai-avatar" class="ai-buddy">🤖</div>
+
+    <div id="start-screen">
+        <h1 style="color: var(--royal-burgundy);">🏆 تحدي الذكاءات الـ 13 الملكي</h1>
+        <p>أهلاً بك! أدخل بياناتك لنبدأ رحلة استكشاف عبقريتك</p>
+        <input type="text" id="student-name" placeholder="اسم المتقدم" style="padding:15px; width:80%; border-radius:15px; border:2px solid gold; margin-bottom:10px;"><br>
+        <input type="text" id="student-class" placeholder="الصف" style="padding:15px; width:80%; border-radius:15px; border:2px solid gold;"><br>
+        <button class="btn-action" onclick="startQuiz()">ابدأ التحدي ⮕</button>
+    </div>
+
+    <div id="quiz-section">
+        <div id="status-msg" style="font-weight:bold; color:var(--royal-turquoise); margin-bottom:10px;">أنا أراقب ذكاءك.. ركز!</div>
+        <div id="question" class="question-box"></div>
+        <div id="options" class="options-grid"></div>
+        <button id="next-btn" class="btn-action" style="display:none;" onclick="loadNextQuestion()">السؤال التالي ⮕</button>
+    </div>
+
+    <div id="score-container">
+        <h1>✨ التقرير النهائي للملك ✨</h1>
+        <div id="final-info" style="font-size: 1.2rem; font-weight: bold; margin-bottom: 10px;"></div>
+        <h1 id="final-score" style="font-size: 3rem; color: var(--royal-burgundy);"></h1>
+        <div id="medal-zone"></div>
+        
+        <table id="report-table">
+            <thead><tr><th>السؤال</th><th>إجابتك</th><th>الحالة</th></tr></thead>
+            <tbody id="report-body"></tbody>
+        </table>
+
+        <div class="no-print">
+            <button class="btn-action" onclick="window.print()" style="background:var(--royal-turquoise)">طباعة السجل والوسام 🖨️</button>
+            <button class="btn-action" onclick="location.reload()" style="background:#7f8c8d; margin-right:10px;">إعادة</button>
+        </div>
+    </div>
+</div>
+
+<audio id="s-correct" src="https://www.soundjay.com"></audio>
+<audio id="s-wrong" src="https://www.soundjay.com"></audio>
+
+<script>
+    const quizData = [
+        { q: "القدرة على محاكاة الشخصيات في مسرح صامت وفهم الآلات عبر تفكيكها:", options: ["ذكاء مكاني", "ذكاء حركي", "ذكاء منطقي", "ذكاء وجودي"], correct: 1 },
+        { q: "إقناع المتنازعين عبر استيعاب دوافعهم الخفية يمثل ذكاءً:", options: ["ذاتياً", "اجتماعياً", "لغوياً", "وجودياً"], correct: 1 },
+        { q: "تصنيف الصخور بناءً على أنماط تشكلها الجيولوجي يمثل ذكاءً:", options: ["منطقياً", "بصرياً", "طبيعياً", "وجودياً"], correct: 2 },
+        { q: "إدراك الفراغات بين النوتات وتوقع الإيقاع بناءً على المشاعر:", options: ["موسيقياً", "منطقياً", "ذاتياً", "حركياً"], correct: 0 },
+        { q: "استخدام استعارات مكنية لوصف مفاهيم مجردة كالعدالة هو دمج للغوي مع:", options: ["الاجتماعي", "المنطقي", "الوجودي", "البصري"], correct: 2 },
+        { q: "تخيل دوران المبنى بزاوية 360 درجة في العقل قبل رسمه:", options: ["منطقي", "بصري مكاني", "حركي", "طبيعي"], correct: 1 },
+        { q: "الوعي العميق بنقاط الضعف واستخدامها كمحفز للنجاح:", options: ["اجتماعي", "منطقي", "ذاتي", "وجودي"], correct: 2 },
+        { q: "التساؤل عن مصير الوعي البشري بعد فناء الكون:", options: ["طبيعي", "منطقي", "وجودي", "ذاتي"], correct: 2 },
+        { q: "توقع نقلات الشطرنج بناءً على أنماط هندسية يراها على الرقعة:", options: ["بصري ومنطقي", "لغوي واجتماعي", "حركي وبصري", "طبيعي ومنطقي"], correct: 0 },
+        { q: "استخدام الجسد بالكامل أو أجزاء منه لحل مشكلات معقدة (كالجراحين):", options: ["بصري", "حركي جسمي", "منطقي", "طبيعي"], correct: 1 },
+        { q: "القدرة على استنتاج المعاني من نبرة الصوت وتعابير الوجه العفوية:", options: ["لغوي", "اجتماعي", "ذاتي", "موسيقي"], correct: 1 },
+        { q: "القدرة على تصنيف الأنواع الحية وفهم التوازن البيئي المعقد:", options: ["طبيعي", "وجودي", "منطقي", "بصري"], correct: 0 },
+        { q: "التأمل في أصل الوجود ومعنى الحياة والموت والكون:", options: ["ذاتي", "اجتماعي", "وجودي", "موسيقي"], correct: 2 }
+    ];
+
+    let currentIdx = 0, score = 0, userAnswers = [];
+    const avatar = document.getElementById('ai-avatar');
+
+    function startQuiz() {
+        const name = document.getElementById('student-name').value;
+        const sClass = document.getElementById('student-class').value;
+        if(!name || !sClass) return alert("يرجى إدخال البيانات!");
+        document.getElementById('start-screen').style.display = 'none';
+        document.getElementById('quiz-section').style.display = 'block';
+        loadQuestion();
+    }
+
+    function loadQuestion() {
+        const current = quizData[currentIdx];
+        document.getElementById('question').innerText = current.q;
+        const optionsDiv = document.getElementById('options');
+        optionsDiv.innerHTML = '';
+        document.getElementById('next-btn').style.display = 'none';
+        avatar.innerText = "🤖";
+        
+        current.options.forEach((opt, idx) => {
+            const btn = document.createElement('button');
+            btn.className = 'option-btn';
+            btn.innerText = opt;
+            btn.onclick = () => checkAnswer(idx, btn);
+            optionsDiv.appendChild(btn);
+        });
+    }
+
+    function checkAnswer(idx, btn) {
+        const correct = quizData[currentIdx].correct;
+        const btns = document.querySelectorAll('.option-btn');
+        btns.forEach(b => b.style.pointerEvents = 'none');
+
+        if(idx === correct) {
+            btn.classList.add('correct');
+            document.getElementById('s-correct').play();
+            score++;
+            avatar.innerText = "😎";
+            document.getElementById('status-msg').innerText = "مذهل! استمر هكذا.";
+        } else {
+            btn.classList.add('wrong');
+            btns[correct].classList.add('correct');
+            document.getElementById('s-wrong').play();
+            avatar.innerText = "🧐";
+            document.getElementById('status-msg').innerText = "ركز أكثر في المرة القادمة!";
+        }
+
+        userAnswers.push({ q: quizData[currentIdx].q, a: quizData[currentIdx].options[idx], s: idx === correct ? "✅" : "❌" });
+        document.getElementById('next-btn').style.display = 'inline-block';
+    }
+
+    function loadNextQuestion() {
+        currentIdx++;
+        if(currentIdx < quizData.length) loadQuestion();
+        else showResults();
+    }
+
+    function showResults() {
+        document.getElementById('quiz-section').style.display = 'none';
+        document.getElementById('score-container').style.display = 'block';
+        document.getElementById('final-score').innerText = `${score} / ${quizData.length}`;
+        document.getElementById('final-info').innerText = `المتسابق: ${document.getElementById('student-name').value} | الصف: ${document.getElementById('student-class').value}`;
+        
+        if(score >= 10) {
+            document.getElementById('medal-zone').innerHTML = '<img src="https://cdn-icons-png.flaticon.com" width="100"><h2 style="color:gold;">وسام العبقرية الفائق</h2>';
+            avatar.innerText = "👑";
+        }
+        
+        const tbody = document.getElementById('report-body');
+        userAnswers.forEach(ans => {
+            tbody.innerHTML += `<tr><td>${ans.q}</td><td>${ans.a}</td><td>${ans.s}</td></tr>`;
+        });
+    }
+</script>
+</body>
+</html>
