@@ -2,211 +2,206 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>مختبر الإبداع - صفاء المصري</title>
+    <title>تحدي الموهبة - صفاء المصري</title>
     <script src="https://cdnjs.cloudflare.com"></script>
     <style>
-        :root { --gold: #D4AF37; --cyan: #00f2ff; --royal: #4a0e0e; }
-        
-        body { 
-            font-family: 'Cairo', sans-serif; 
-            margin: 0; padding: 0; 
-            min-height: 100vh; 
-            background: radial-gradient(circle at center, #1a1a1a, #000); 
-            display: flex; justify-content: center; align-items: center; 
-            overflow: hidden; 
+        :root { --gold: #FFD700; --neon-cyan: #00f2ff; --bg: #000000; --panel: #1a1a1a; }
+        body { font-family: 'Cairo', sans-serif; margin: 0; background: var(--bg); color: white; display: flex; justify-content: center; align-items: center; min-height: 100vh; overflow: hidden; }
+
+        /* الأفاتار: الطفلة والوردة */
+        .avatar-3d { width: 140px; height: 180px; margin: 0 auto 20px; position: relative; transition: 0.5s; }
+        .girl-head { width: 60px; height: 65px; background: #ffe0bd; border-radius: 50% 50% 45% 45%; margin: 0 auto; position: relative; border: 2px solid #5d4037; }
+        .hair { width: 70px; height: 40px; background: #4e342e; position: absolute; top: -10px; left: -5px; border-radius: 40px 40px 0 0; }
+        .eye { width: 8px; height: 8px; background: #000; border-radius: 50%; position: absolute; top: 30px; transition: 0.3s; }
+        .eye.l { left: 15px; } .eye.r { right: 15px; }
+        .smile { width: 25px; height: 12px; border-bottom: 3px solid #d32f2f; border-radius: 50%; position: absolute; bottom: 15px; left: 17px; transition: 0.5s; }
+        .rose { position: absolute; bottom: -30px; right: -20px; font-size: 40px; animation: sway 3s infinite ease-in-out; }
+        @keyframes sway { 0%, 100% { transform: rotate(-5deg); } 50% { transform: rotate(15deg); } }
+
+        /* الواجهة ثلاثية الأبعاد */
+        #main-board { 
+            background: var(--panel); width: 90%; max-width: 850px; padding: 40px; 
+            border-radius: 30px; border: 2px solid var(--gold); text-align: center;
+            box-shadow: 0 0 50px rgba(255, 215, 0, 0.2); position: relative;
+            transform-style: preserve-3d; transform: rotateX(5deg);
         }
 
-        /* الأفاتار الذي يمشي خارج الإطار */
-        .avatar-walker {
-            position: absolute;
-            width: 120px; height: 180px;
-            z-index: 1; /* خلف الواجهة وأمام الخلفية */
-            animation: walkAround 20s linear infinite;
-            display: flex; flex-direction: column; align-items: center;
+        .timer-ring { 
+            width: 70px; height: 70px; border-radius: 50%; border: 4px solid var(--neon-cyan);
+            margin: 0 auto 20px; display: flex; align-items: center; justify-content: center;
+            font-weight: bold; font-size: 1.5rem; text-shadow: 0 0 10px var(--neon-cyan);
         }
 
-        @keyframes walkAround {
-            0% { left: -150px; top: 20%; transform: scaleX(1); }
-            45% { left: 110%; top: 20%; transform: scaleX(1); }
-            50% { left: 110%; top: 70%; transform: scaleX(-1); }
-            95% { left: -150px; top: 70%; transform: scaleX(-1); }
-            100% { left: -150px; top: 20%; transform: scaleX(1); }
+        .question-card { 
+            background: #252525; padding: 30px; border-radius: 20px; font-size: 1.4rem;
+            margin-bottom: 25px; border-right: 10px solid var(--gold); text-align: right;
+            animation: slideIn 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+        @keyframes slideIn { from { opacity: 0; transform: translateZ(-200px); } to { opacity: 1; transform: translateZ(0); } }
+
+        .options-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+        .opt-btn { 
+            padding: 20px; background: #333; color: white; border: 1px solid #555;
+            border-radius: 15px; cursor: pointer; font-size: 1.1rem; transition: 0.3s;
+        }
+        .opt-btn:hover { background: var(--gold); color: black; transform: scale(1.05); }
+
+        .action-btn { 
+            background: var(--neon-cyan); color: black; padding: 15px 45px; 
+            border: none; border-radius: 50px; font-size: 1.2rem; cursor: pointer; font-weight: bold;
+            margin: 10px; box-shadow: 0 0 20px var(--neon-cyan);
         }
 
-        .bot-body { 
-            width: 80px; height: 100px; 
-            background: linear-gradient(to bottom, #444, #222); 
-            border-radius: 20px; border: 2px solid var(--cyan); 
-            box-shadow: 0 0 20px var(--cyan); position: relative;
-        }
-        .bot-eye { 
-            width: 15px; height: 15px; background: #fff; border-radius: 50%; 
-            position: absolute; top: 25px; box-shadow: 0 0 10px #fff;
-            animation: pulseEye 1s infinite alternate;
-        }
-        @keyframes pulseEye { from { opacity: 0.5; } to { opacity: 1; } }
-        .bot-eye.l { left: 15px; } .bot-eye.r { right: 15px; }
-        
-        /* الواجهة الكبيرة والجميلة */
-        #game-container { 
-            background: rgba(255, 255, 255, 0.05); 
-            backdrop-filter: blur(25px); 
-            width: 90%; max-width: 950px; /* تكبير الواجهة */
-            min-height: 600px;
-            padding: 50px; 
-            border-radius: 40px; 
-            border: 1px solid rgba(212, 175, 55, 0.4); 
-            text-align: center; 
-            z-index: 10; /* فوق الأفاتار */
-            box-shadow: 0 40px 100px rgba(0,0,0,0.8);
-            position: relative;
-        }
-
-        .question-box { 
-            font-size: 1.8rem; /* خط أكبر */
-            margin-bottom: 40px; padding: 40px; 
-            background: rgba(0,0,0,0.6); 
-            border-radius: 25px; border-right: 12px solid var(--gold); 
-            text-align: right; line-height: 1.8;
-        }
-
-        .options-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 25px; }
-        
-        .option-btn { 
-            padding: 25px; font-size: 1.2rem; 
-            background: rgba(255,255,255,0.08); color: #fff; 
-            border: 1px solid rgba(255,255,255,0.2); border-radius: 20px; 
-            cursor: pointer; transition: 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); 
-        }
-        .option-btn:hover { background: var(--gold); color: #000; transform: translateY(-10px) scale(1.05); }
-
-        .btn-action { 
-            background: var(--cyan); color: #000; 
-            padding: 20px 60px; border-radius: 50px; 
-            font-size: 1.3rem; font-weight: bold; border: none; cursor: pointer; 
-            margin-top: 40px; transition: 0.3s;
-        }
-        .btn-action:hover { box-shadow: 0 0 30px var(--cyan); transform: scale(1.1); }
-
-        #score-container h1 { font-size: 5rem; margin: 20px 0; }
-        
-        @media print { .no-print, .avatar-walker { display: none !important; } }
-        #quiz-section, #score-container { display: none; }
+        @media print { .no-print { display: none !important; } body { background: white; color: black; } #main-board { border: 1px solid #000; box-shadow: none; width: 100%; color: black !important; } }
+        #quiz-part, #result-part { display: none; }
     </style>
 </head>
 <body>
 
-    <!-- الأفاتار الطليق خارج الواجهة -->
-    <div class="avatar-walker no-print" id="main-bot">
-        <div class="bot-body">
-            <div class="bot-eye l"></div><div class="bot-eye r"></div>
-            <div style="width:30px; height:4px; background:var(--cyan); margin:45px auto; border-radius:2px;"></div>
+<div id="main-board">
+    <div class="avatar-3d no-print" id="avatar">
+        <div class="girl-head">
+            <div class="hair"></div>
+            <div class="eye l" id="el"></div><div class="eye r" id="er"></div>
+            <div class="smile" id="sm"></div>
         </div>
-        <div style="color:var(--cyan); font-weight:bold; margin-top:10px; font-size:12px; background:rgba(0,0,0,0.5); padding:2px 8px; border-radius:10px;">AI Assistant</div>
+        <div class="rose">🌹</div>
     </div>
 
-    <div id="game-container">
-        <!-- شاشة البداية -->
-        <div id="start-screen">
-            <h1 style="color: var(--gold); font-size: 3rem; margin-bottom: 10px;">مختبر الذكاءات المتعددة</h1>
-            <h2 style="color: #fff; margin-top: 0;">بإشراف الأخصائية: صفاء المصري</h2>
-            <p style="color: #ccc; font-size: 1.2rem;">نظام تحليل الموهبة والإبداع المتطور</p>
-            <div style="margin-top: 40px;">
-                <input type="text" id="p-name" placeholder="اسم المبدع/ة المتقدم/ة" style="padding:20px; width:60%; border-radius:15px; border:none; margin-bottom:15px; font-size:1.1rem; text-align:center;"><br>
-                <input type="text" id="p-class" placeholder="الصف الدراسي" style="padding:20px; width:60%; border-radius:15px; border:none; font-size:1.1rem; text-align:center;"><br>
-                <button class="btn-action" onclick="startGame()">تحليل النظام الذهني ⮕</button>
-            </div>
-        </div>
-
-        <!-- قسم الأسئلة -->
-        <div id="quiz-section">
-            <div id="q-text" class="question-box"></div>
-            <div id="opts-grid" class="options-grid"></div>
-            <button id="nxt" class="btn-action" style="display:none;" onclick="nextQ()">الانتقال للمرحلة التالية</button>
-        </div>
-
-        <!-- قسم النتائج -->
-        <div id="score-container">
-            <h2 style="color: var(--gold); font-size: 2rem;">تقرير تحليل الموهبة النهائي</h2>
-            <h1 id="f-score"></h1>
-            <div id="award" style="font-size: 1.5rem; margin-bottom: 30px;"></div>
-            <table id="rep" style="width:100%; text-align: right; color: #fff; background: rgba(0,0,0,0.3); border-collapse: collapse;">
-                <tbody id="rep-body"></tbody>
-            </table>
-            <div class="no-print" style="margin-top: 40px;">
-                <button class="btn-action" onclick="window.print()" style="background:var(--gold)">طباعة السجل 🖨️</button>
-                <button class="btn-action" onclick="location.reload()" style="background:#444; color:#fff; margin-right:20px;">إعادة التحليل</button>
-            </div>
-        </div>
+    <!-- شاشة البداية -->
+    <div id="start-screen">
+        <h1 style="color: var(--gold);">مختبر الموهبة والإبداع</h1>
+        <h3 style="color: var(--neon-cyan);">بإشراف الأخصائية: صفاء المصري</h3>
+        <input type="text" id="std-name" placeholder="اسم المبدع/ة" style="padding:15px; width:70%; margin:10px; border-radius:10px; border:none; text-align:center;"><br>
+        <input type="text" id="std-class" placeholder="الصف" style="padding:15px; width:70%; margin:10px; border-radius:10px; border:none; text-align:center;"><br>
+        <button class="action-btn" onclick="start()">دخول المختبر ⮕</button>
     </div>
 
+    <!-- قسم الأسئلة -->
+    <div id="quiz-part">
+        <div class="timer-ring" id="timer">15</div>
+        <div id="q-box" class="question-card"></div>
+        <div id="o-grid" class="options-grid"></div>
+        <button id="nxt" class="action-btn" style="display:none;" onclick="nextQ()">السؤال التالي</button>
+    </div>
+
+    <!-- قسم النتائج -->
+    <div id="result-part">
+        <h2 style="color: var(--gold);">تقرير تحليل الموهبة</h2>
+        <div id="std-info" style="margin-bottom:20px; font-weight:bold; color:var(--neon-cyan);"></div>
+        <h1 id="res-score" style="font-size: 4rem;"></h1>
+        <table id="rep" style="width:100%; text-align:right; border-collapse:collapse; background:rgba(255,255,255,0.1);">
+            <tbody id="rep-body"></tbody>
+        </table>
+        <div class="no-print">
+            <button class="action-btn" onclick="window.print()">طباعة السجل 🖨️</button>
+            <button class="action-btn" onclick="askRetry()" style="background:#555; color:white;">محاولة جديدة (للمعلمة) 🔑</button>
+        </div>
+    </div>
+</div>
+
+<!-- أصوات النقر -->
+<audio id="aud-click" src="https://www.soundjay.com"></audio>
 <audio id="aud-win" src="https://www.soundjay.com"></audio>
 <audio id="aud-lose" src="https://www.soundjay.com"></audio>
 
 <script>
-    const quizData = [
-        { q: "1. تفضل تفكيك الأنظمة المعقدة لاكتشاف منطق عملها الداخلي بدلاً من مجرد تشغيلها:", a: ["نمط حركي/تقني", "نمط منطقي"], c: 0 },
-        { q: "2. تستطيع التنبؤ بردود فعل الآخرين بناءً على ملاحظة تعابير وجوههم العفوية:", a: ["تحليل اجتماعي", "وعي ذاتي"], c: 0 },
-        { q: "3. تلاحظ أنماط النمو المتشابهة في الطبيعة وتربطها بقوانين كونية موحدة:", a: ["استنتاج طبيعي", "إدراك بصري"], c: 0 },
-        { q: "4. تدرك الإيقاعات غير المنتظمة في الأصوات المحيطة وتستطيع توظيفها تعبيرياً:", a: ["ذكاء موسيقي", "ذكاء حركي"], c: 0 },
-        { q: "5. تستخدم الاستعارات اللغوية لوصف مفاهيم فلسفية مجردة لا تُشرح مباشرة:", a: ["ذكاء لغوي", "ذكاء اجتماعي"], c: 0 },
-        { q: "6. تبني خرائط ذهنية معقدة للأماكن وتحدد الاتجاهات بدقة دون الحاجة لوسائل مساعدة:", a: ["ذكاء مكاني", "ذكاء منطقي"], c: 0 },
-        { q: "7. تمارس النقد الذاتي لقراراتك وتضع خططاً لتطوير وعيك الشخصي بناءً على التجارب:", a: ["ذكاء ذاتي", "ذكاء وجودي"], c: 0 },
-        { q: "8. تشغل بالك القضايا الوجودية الكبرى وتبحث عن غايات الأشياء البعيدة:", a: ["ذكاء وجودي", "ذكاء طبيعي"], c: 0 },
-        { q: "9. تستنبط علاقات منطقية مخفية بين مجموعة بيانات تبدو عشوائية للآخرين:", a: ["منطقي رياضي", "تقني رقمي"], c: 0 },
-        { q: "10. تمتلك بوصلة قيمية مستقلة ترفض اتباع السلوك الجماعي إذا تعارض مع مبادئك:", a: ["ذكاء أخلاقي", "ذكاء اجتماعي"], c: 0 },
-        { q: "11. تبتكر استراتيجيات تعليمية غير تقليدية لتبسيط الأفكار العلمية لزملائك:", a: ["ذكاء تعليمي", "ذكاء لغوي"], c: 0 },
-        { q: "12. تدرك الحالة الوجدانية للمحيطين بك بمجرد تواجدك في حيزهم المكاني:", a: ["ذكاء عاطفي", "ذكاء مكاني"], c: 0 },
-        { q: "13. تنجذب لفهم الخوارزميات وتدفق البيانات التي تدير الأنظمة الرقمية:", a: ["ذكاء رقمي", "ذكاء منطقي"], c: 0 }
+    const data = [
+        { q: "1. هل تستمتع بتفكيك الأجهزة المعقدة لاكتشاف منطق عملها الداخلي؟", a: ["حركي/تقني", "منطقي"], c: 0 },
+        { q: "2. هل تستطيع التنبؤ بردود فعل الآخرين بناءً على مراقبة تعابير وجوههم؟", a: ["اجتماعي", "ذاتي"], c: 0 },
+        { q: "3. هل تربط بين أنماط الطبيعة (كعروق الشجر) وقوانين العلم الكونية؟", a: ["طبيعي", "بصري"], c: 0 },
+        { q: "4. هل تلاحظ الإيقاعات الخفية في أصوات المحركات أو قطرات الماء؟", a: ["موسيقي", "حركي"], c: 0 },
+        { q: "5. هل تستخدم لغة بليغة وتشبيهات غريبة لوصف مشاعرك العميقة؟", a: ["لغوي", "اجتماعي"], c: 0 },
+        { q: "6. هل تبني خرائط ذهنية للأماكن في عقلك وتحدد الاتجاهات بدقة؟", a: ["مكاني", "منطقي"], c: 0 },
+        { q: "7. هل تحلل أسباب غضبك وتضع خطة لتطوير ردود أفعالك مستقبلاً؟", a: ["ذاتي", "وجودي"], c: 0 },
+        { q: "8. هل تشغل بالك غايات الوجود الكبرى ومعنى الحياة والكون؟", a: ["وجودي", "طبيعي"], c: 0 },
+        { q: "9. هل تجد علاقات منطقية مخفية بين مجموعة بيانات تبدو عشوائية؟", a: ["منطقي", "رقمي"], c: 0 },
+        { q: "10. هل ترفض التقليد الأعمى وتتبع بوصلة قيمية داخلية مستقلة؟", a: ["أخلاقي", "اجتماعي"], c: 0 },
+        { q: "11. هل تبتكر وسائل ذكية لتبسيط فكرة علمية صعبة لزملائك؟", a: ["تعليمي", "لغوي"], c: 0 },
+        { q: "12. هل تشعر 'بثقل الجو' أو بهجته فور دخولك لمكان ما؟", a: ["عاطفي", "مكاني"], c: 0 },
+        { q: "13. هل تنجذب لفهم الخوارزميات وتدفق البيانات في الأنظمة الرقمية؟", a: ["رقمي", "منطقي"], c: 0 }
     ];
 
-    let qi = 0, score = 0, logs = [];
+    let qi = 0, score = 0, logs = [], t, timeLeft = 15;
+    const click = document.getElementById('aud-click');
 
-    function startGame() {
-        if(!document.getElementById('p-name').value) return alert("أدخل اسم المبدع أولاً");
+    function start() {
+        click.play();
+        if(!document.getElementById('std-name').value) return alert("أدخلي اسم المبدع أولاً");
         document.getElementById('start-screen').style.display = 'none';
-        document.getElementById('quiz-section').style.display = 'block';
-        loadQ();
+        document.getElementById('quiz-part').style.display = 'block';
+        load();
     }
 
-    function loadQ() {
-        const q = quizData[qi];
-        document.getElementById('q-text').innerText = q.q;
-        const g = document.getElementById('opts-grid'); g.innerHTML = '';
+    function runTimer() {
+        clearInterval(t); timeLeft = 15;
+        document.getElementById('timer').innerText = timeLeft;
+        t = setInterval(() => {
+            timeLeft--; document.getElementById('timer').innerText = timeLeft;
+            if(timeLeft <= 0) { clearInterval(t); check(-1, null); }
+        }, 1000);
+    }
+
+    function load() {
+        runTimer();
+        const q = data[qi];
+        document.getElementById('q-box').innerText = q.q;
+        const g = document.getElementById('o-grid'); g.innerHTML = '';
         document.getElementById('nxt').style.display = 'none';
+        resetAvatar();
+
         q.a.forEach((o, i) => {
-            const b = document.createElement('button'); b.className = 'option-btn';
-            b.innerText = o; b.onclick = () => check(i, b); g.appendChild(b);
+            const b = document.createElement('button'); b.className = 'opt-btn';
+            b.innerText = o; b.onclick = () => { click.play(); check(i, b); }; g.appendChild(b);
         });
     }
 
     function check(i, b) {
-        const c = quizData[qi].c;
-        const all = document.querySelectorAll('.option-btn');
+        clearInterval(t);
+        const c = data[qi].c;
+        const all = document.querySelectorAll('.opt-btn');
         all.forEach(x => x.style.pointerEvents = 'none');
-        
+        const sm = document.getElementById('sm');
+        const el = document.getElementById('el'); const er = document.getElementById('er');
+
         if(i === c) {
             b.style.background = '#27ae60'; document.getElementById('aud-win').play(); score++;
-            confetti({ particleCount: 150, spread: 70, origin: { y: 0.6 } });
+            sm.style.height = '18px'; sm.style.borderBottom = '4px solid #1b5e20'; // ابتسامة
+            confetti({ particleCount: 100, spread: 70 });
         } else {
-            b.style.background = '#e74c3c'; all[c].style.background = '#27ae60'; document.getElementById('aud-lose').play();
+            if(b) b.style.background = '#c62828'; all[c].style.background = '#27ae60';
+            document.getElementById('aud-lose').play();
+            sm.style.height = '2px'; sm.style.borderBottom = '3px solid #333'; // حزن
+            el.style.transform = 'translateY(3px)'; er.style.transform = 'translateY(3px)';
         }
-        logs.push({ q: quizData[qi].q, a: quizData[qi].a[i], s: i === c ? "متوافق" : "غير متوافق" });
+        logs.push({ q: data[qi].q, a: i === -1 ? "انتهى الوقت" : data[qi].a[i], s: i === c ? "صح" : "خطأ" });
         document.getElementById('nxt').style.display = 'inline-block';
     }
 
+    function resetAvatar() {
+        document.getElementById('sm').style.height = '12px';
+        document.getElementById('sm').style.borderBottom = '3px solid #d32f2f';
+        document.getElementById('el').style.transform = 'none';
+        document.getElementById('er').style.transform = 'none';
+    }
+
     function nextQ() {
-        qi++; if(qi < quizData.length) loadQ(); else finish();
+        click.play();
+        qi++; if(qi < data.length) load(); else finish();
     }
 
     function finish() {
-        document.getElementById('quiz-section').style.display = 'none';
-        document.getElementById('score-container').style.display = 'block';
-        document.getElementById('f-score').innerText = `${score}/${quizData.length}`;
-        document.getElementById('f-info').innerText = "المبدع/ة: " + document.getElementById('p-name').value + " | إشراف الأخصائية صفاء المصري";
-        document.getElementById('award').innerText = score >= 11 ? "🏆 وسام العبقرية الاستثنائية 🏆" : "💡 قدرات معرفية متطورة 💡";
+        document.getElementById('quiz-part').style.display = 'none';
+        document.getElementById('result-part').style.display = 'block';
+        document.getElementById('res-score').innerText = `${score}/${data.length}`;
+        document.getElementById('std-info').innerText = "المبدع/ة: " + document.getElementById('std-name').value + " | إشراف صفاء المصري";
         const body = document.getElementById('rep-body');
-        logs.forEach(l => body.innerHTML += `<tr style="border-bottom:1px solid #555"><td style="padding:15px">${l.q}</td><td style="padding:15px">${l.a}</td><td style="padding:15px">${l.s}</td></tr>`);
+        logs.forEach(l => body.innerHTML += `<tr style="border-bottom:1px solid #444"><td style="padding:10px">${l.q}</td><td style="padding:10px">${l.a}</td><td style="padding:10px">${l.s}</td></tr>`);
+    }
+
+    function askRetry() {
+        const p = prompt("أدخلي الرمز السري للمعلمة (صفاء المصري):");
+        if(p === "1234") location.reload(); else alert("الرمز خاطئ!");
     }
 </script>
 </body>
